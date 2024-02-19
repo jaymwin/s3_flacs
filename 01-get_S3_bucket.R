@@ -15,6 +15,7 @@ s3_df <- cb_get_s3_df()
 # converting to arrow table makes querying much faster (and smaller than csv)
 s3_arrow <-
   as_arrow_table(s3_df) |>
+  # just keep S3 file paths for now
   select(Key)
 
 
@@ -22,6 +23,7 @@ s3_arrow <-
 
 s3_arrow |>
   write_dataset(
+    # save with date in the filename
     path = str_c(here::here('s3_bucket_arrow'), '_', Sys.Date()),
     format = 'parquet'
   )
