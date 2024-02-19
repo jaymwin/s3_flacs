@@ -10,6 +10,7 @@ cb_check_s3()
 # get S3 bucket contents; convert to arrow table --------------------------
 
 # get s3 contents in data frame form
+# this can take a long time (>2 hours)
 s3_df <- cb_get_s3_df()
 
 # converting to arrow table makes querying much faster (and smaller than csv)
