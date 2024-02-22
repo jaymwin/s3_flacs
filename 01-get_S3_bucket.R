@@ -14,17 +14,31 @@ cb_check_s3()
 s3_df <- cb_get_s3_df()
 
 # converting to arrow table makes querying much faster (and smaller than csv)
-s3_arrow <-
+s3_arrow_filepaths <-
   as_arrow_table(s3_df) |>
+  filter(str_detect(Key, '.flac')) |> 
   # just keep S3 file paths for now
   select(Key)
+
+s3_arrow_size <-
+  as_arrow_table(s3_df) |>
+  filter(str_detect(Key, '.flac')) |> 
+  # just keep S3 file paths for now
+  select(Size)
 
 
 # save arrow data frame ---------------------------------------------------
 
-s3_arrow |>
+s3_arrow_filepaths |>
   write_dataset(
     # save with date in the filename
-    path = str_c(here::here('s3_bucket_arrow'), '_', Sys.Date()),
+    path = str_c(here::here('s3_filepath_arrow'), '_', Sys.Date()),
+    format = 'parquet'
+  )
+
+s3_arrow_size |>
+  write_dataset(
+    # save with date in the filename
+    path = str_c(here::here('s3_size_arrow'), '_', Sys.Date()),
     format = 'parquet'
   )
